@@ -1,0 +1,1 @@
+# Smal_platform_2.0
