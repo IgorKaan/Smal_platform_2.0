@@ -166,15 +166,18 @@ void setup() {
 
 
 void loop() {
+    // work_with_CAN();
+    // delay(200);
     set_speed_serial();
     if (millis() - timing > charge_send_time){ // Вместо 10000 подставьте нужное вам значение паузы 
         timing = millis(); 
         get_accum_charge();
     }
+    //123
     // servo_set_position(120);
     // delay(1000);
     // servo_set_position(90);
-    // delay(1000);
+    //delay(100);
 }
     
 
@@ -356,7 +359,11 @@ void work_with_CAN(){
     CAN_frame_t rx_frame;
     Get_data data;
     if (xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
+        //if (rx_frame.MsgID == ID_RFID) {
         data.print(rx_frame.data.u8, rx_frame.MsgID);
+        //}
+        //Serial.println("CAN Work");
+        // Serial.println(rx_frame.MsgID);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ё(rx_frame.data.u8, rx_frame.MsgID);
     }
 }
 
@@ -369,14 +376,22 @@ void servo_set_position(uint8_t angle) {
 
 void get_accum_charge() {
     long accum_adc = analogRead(ACCUM_PIN);
+    //Serial.println(accum_adc);
     const long out_max = 100;
     const long out_min = 0;
-    const long in_max = 3400;
-    const long in_min = 2400;
+    // const long in_max = 3400;
+    // const long in_min = 2400;
+    // const long dividend = out_max - out_min;
+    // const long divisor = in_max - in_min;
+    // if (accum_adc > 3400) {accum_adc = 3400;}
+    // if (accum_adc < 2400) {accum_adc = 2400;}
+    const long in_max = 1950;
+    const long in_min = 1600;
     const long dividend = out_max - out_min;
     const long divisor = in_max - in_min;
-    if (accum_adc > 3400) {accum_adc = 3400;}
-    if (accum_adc < 2400) {accum_adc = 2400;}
+    if (accum_adc > 1950) {accum_adc = 1950;}
+    if (accum_adc < 1600) {accum_adc = 1600;}
+
     const long delta = accum_adc - in_min;
     uint8_t charge_in_percent = 0;
     charge_in_percent = static_cast<uint8_t>((delta * dividend + (divisor / 2)) / divisor + out_min);
